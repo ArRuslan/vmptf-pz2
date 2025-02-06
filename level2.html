@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Json visualizer</title>
+</head>
+<body>
+<div id="json-container">
+    <table style="border: 1px solid black">
+        <tr>
+            <td style="border: 1px solid black">key</td>
+            <td style="border: 1px solid black">
+                <span>value type</span>
+                <table style="border: 1px solid black">
+                    <tr>
+                        <td>key</td>
+                        <td>
+                            <p>value type</p>
+                            value
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+<script>
+    function createRowFor(type, key, value) {
+        const tr = document.createElement("tr");
+        const key_td = document.createElement("td");
+        const val_td = document.createElement("td");
+
+        key_td.style.border = val_td.style.border = "1px solid black";
+
+        tr.append(key_td, val_td);
+
+        key_td.innerText = key;
+
+        const value_type_span = document.createElement("span");
+        value_type_span.innerText = type;
+        val_td.append(value_type_span, document.createElement("br"), value);
+
+        return tr;
+    }
+
+    function _processObjectEntry(entry, key) {
+        if(typeof entry === "object" && Array.isArray(entry)) {
+            return createRowFor("Array", key, createTableForArray(entry));
+        } else if(typeof entry === "object") {
+            return createRowFor("Object", key, createTableForObject(entry));
+        } else if(typeof entry === "string" || typeof entry === "number" || typeof entry === "boolean") {
+            const type = (typeof entry).charAt(0).toUpperCase() + (typeof entry).slice(1);
+            const value_span = document.createElement("span");
+            value_span.innerText = entry;
+            return createRowFor(type, key, value_span);
+        }
+    }
+
+    function createTableForArray(obj) {
+        const table = document.createElement("table");
+        table.style.border = "1px solid black";
+
+        for(const idx in obj) {
+            table.appendChild(_processObjectEntry(obj[idx], idx));
+        }
+
+        return table;
+    }
+
+    function createTableForObject(obj) {
+        const table = document.createElement("table");
+        table.style.border = "1px solid black";
+
+        for(const key in obj) {
+            table.appendChild(_processObjectEntry(obj[key], key));
+        }
+
+        return table;
+    }
+
+    const json = JSON.parse(prompt("Enter json: "))
+
+    const json_container = document.getElementById("json-container");
+    json_container.innerHTML = "";
+    json_container.appendChild(Array.isArray(json) ? createTableForArray(json) : createTableForObject(json));
+</script>
+</body>
+</html>
