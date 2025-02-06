@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My info</title>
+</head>
+<body>
+<div id="info-container">
+    <p id="loading-text">Loading info...</p>
+</div>
+<script>
+    fetch("/level1_info.json")
+    .then(resp => resp.json())
+    .then(json_info => {
+        const info_container = document.getElementById("info-container");
+        const loading_text = document.getElementById("loading-text");
+        if(loading_text !== undefined)
+            loading_text.remove();
+
+        const name_el = document.createElement("p");
+        name_el.innerText = `Name: ${json_info.name}`;
+        info_container.appendChild(name_el);
+
+        const age_el = document.createElement("p");
+        age_el.innerText = `Age: ${json_info.age}`;
+        info_container.appendChild(age_el);
+
+        const hobby_el = document.createElement("p");
+        hobby_el.innerText = `Hobby: ${json_info.hobby}`;
+        info_container.appendChild(hobby_el);
+    }).catch(() => {
+        const info_container = document.getElementById("info-container");
+        const loading_text = document.getElementById("loading-text");
+        if(loading_text !== undefined)
+            loading_text.remove();
+
+        const error_el = document.createElement("h1");
+        error_el.innerText = "Error occurred while fetching data!";
+        error_el.style.color = "red"
+        info_container.appendChild(error_el);
+    });
+</script>
+</body>
+</html>
