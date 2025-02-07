@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <style>
+        table, td, th {
+            border: 1px solid black;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        button {
+            padding: 6px;
+            margin: 8px 0;
+            width: 100%;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+<button onclick="addUserPrompt();" id="add-user-btn">Add user</button>
+<table id="users-container">
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Group</th>
+        <th>Change group</th>
+    </tr>
+</table>
+
+<select style="display: none;" id="group-select">
+    <option value="admin">Admin</option>
+    <option value="user">User</option>
+    <option value="idk">Something else</option>
+</select>
+
+<script>
+    const table = document.getElementById("users-container");
+    const group_select = document.getElementById("group-select");
+    const add_btn = document.getElementById("add-user-btn");
+    const users = [];
+
+    function updateTableRow(user) {
+        user._element.childNodes[0].innerText = user.name;
+        user._element.childNodes[1].innerText = user.email;
+        user._element.childNodes[2].innerText = user.group;
+    }
+
+    function addUser(name, email, group) {
+        const row = document.createElement("tr");
+        const name_el = document.createElement("td");
+        const email_el = document.createElement("td");
+        const group_el = document.createElement("td");
+        const changegroup_el = document.createElement("td");
+
+        const user = {
+            "name": name,
+            "email": email,
+            "group": group,
+            "_element": row,
+        };
+
+        row.append(name_el, email_el, group_el, changegroup_el);
+        users.push(user);
+        updateTableRow(user);
+
+        const select_el = group_select.cloneNode(true);
+        changegroup_el.appendChild(select_el);
+        select_el.id = undefined;
+        select_el.style.display = "block";
+        select_el.onchange = () => {
+            user.group = select_el.value;
+            updateTableRow(user);
+        }
+
+        table.appendChild(row);
+    }
+
+    function addUserPrompt() {
+        const name = prompt("Name: ");
+        const email = prompt("Email: ");
+        const group = prompt("Group: ");
+
+        addUser(name, email, group);
+    }
+
+    function loadUsersFromApi() {
+        const add_btn_text = add_btn.innerText;
+        add_btn.innerText = "Loading...";
+        add_btn.disabled = true;
+        fetch("https://jsonplaceholder.typicode.com/users")
+            .then(resp => resp.json())
+            .then(json => {
+                for(const user of json) {
+                    addUser(user["name"], user["email"], "unknown");
+                }
+            })
+            .catch(() => {
+                alert("Failed to load users from api!");
+            })
+            .finally(() => {
+                add_btn.innerText = add_btn_text;
+                add_btn.disabled = false;
+            });
+    }
+
+    loadUsersFromApi()
+</script>
+</body>
+</html>
