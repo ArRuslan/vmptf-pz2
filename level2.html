@@ -5,25 +5,7 @@
     <title>Json visualizer</title>
 </head>
 <body>
-<div id="json-container">
-    <table style="border: 1px solid black">
-        <tr>
-            <td style="border: 1px solid black">key</td>
-            <td style="border: 1px solid black">
-                <span>value type</span>
-                <table style="border: 1px solid black">
-                    <tr>
-                        <td>key</td>
-                        <td>
-                            <p>value type</p>
-                            value
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</div>
+<div id="json-container"></div>
 <script>
     function createRowFor(type, key, value) {
         const tr = document.createElement("tr");
